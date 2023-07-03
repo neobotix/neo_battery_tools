@@ -8,9 +8,11 @@ public:
   {
     // Declare parameters
     this->declare_parameter<double>("battery_threshold", 20.0);
+    this->declare_parameter<bool>("log_battery_voltage", false);
 
     // Get parameters
     this->get_parameter("battery_threshold", batteryThreshold_);
+    this->get_parameter("log_battery_voltage", logBatteryVoltage_);
 
     // Subscribe to the "state" topic
     stateSubscriber_ = this->create_subscription<neo_msgs2::msg::RelayBoardV2>(
@@ -24,8 +26,10 @@ private:
     float batteryPercentage = msg->battery_voltage * 100;
     float batteryVoltage = msg->battery_voltage;
 
-    RCLCPP_INFO(this->get_logger(), "Battery percentage: %.2f%%", batteryPercentage);
-    RCLCPP_INFO(this->get_logger(), "Battery voltage: %.2fV", batteryVoltage);
+    if (logBatteryVoltage_) {
+      RCLCPP_INFO(this->get_logger(), "Battery percentage: %.2f%%", batteryPercentage);
+      RCLCPP_INFO(this->get_logger(), "Battery voltage: %.2fV", batteryVoltage);
+    }
 
     // Check if battery percentage goes below the threshold
     if (batteryPercentage < batteryThreshold_)
@@ -38,6 +42,7 @@ private:
   }
 
   double batteryThreshold_;
+  bool logBatteryVoltage_;
   rclcpp::Subscription<neo_msgs2::msg::RelayBoardV2>::SharedPtr stateSubscriber_;
 };
 
