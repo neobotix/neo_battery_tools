@@ -33,7 +33,7 @@ private:
       RCLCPP_WARN(this->get_logger(), "Battery percentage is below the user specified threshold: %.2f%%", batteryPercentage);
       
       // Execute the sudo halt command to shut down the computer
-      std::system("sudo halt");
+      std::system("sudo halt -p");
     }
   }
 
